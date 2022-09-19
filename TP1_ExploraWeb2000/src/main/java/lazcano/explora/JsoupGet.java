@@ -38,4 +38,10 @@ public class JsoupGet {
         }
         return i;
     }
+
+    public static String premierLien(String url) throws IOException {
+        Document document =  Jsoup.connect(url).get();
+        Elements links = document.select("a[href]");
+        return String.valueOf(links.get(0));
+    }
 }
