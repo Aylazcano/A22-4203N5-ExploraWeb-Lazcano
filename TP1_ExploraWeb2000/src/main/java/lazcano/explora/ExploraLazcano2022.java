@@ -3,10 +3,10 @@ package lazcano.explora;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import javax.swing.plaf.synth.Region;
-import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Set;
 
 public class ExploraLazcano2022 {
 
@@ -45,13 +45,11 @@ public class ExploraLazcano2022 {
 
             //COMPLETED 04: Si l'argument URL est correct, il faut s'assurer que la liste de mots clés est correcte. Nous validons qu'elle ne contient pas de répétitions.
             String[] mots = args[1].split(" ");
-            int i = 1;
-            for (String mot : mots) {
-                if (mot == mots[i]){
-                    System.out.println("Mots clés fournis incorrects \"" + args[1] + "\".\n" +
-                            "Merci de ne pas avoir de répétitions dans les mots clés : " + mot);
-                    return;
-                }
+            Set<String> listeDeRepetitions = Methodes.chercheRepetitions(Methodes.listeDepuisTableau(mots));
+            if (!listeDeRepetitions.isEmpty()){
+                System.out.println("Mots clés fournis incorrects \"" + args[1] + "\".\n" +
+                        "Merci de ne pas avoir de répétitions dans les mots clés : " + listeDeRepetitions.toString().replace("[", "").replace("]",""));
+                return;
             }
         }
         //endregion
@@ -60,22 +58,32 @@ public class ExploraLazcano2022 {
 
         //COMPLETED 05: Si les arguments sont corrects, il faut alors commencer l'exploration de la première page. Tu dois afficher dans la console le titre (title) de la page et l'URL complète.
         System.out.println("Les arguments sont corrects, nous commençons l'exploration de " + args[0]);
+        System.out.println("Titre : " + Methodes.titreDeLaPage(Methodes.premierLien(args[0])) + "URL : " + args[0] + " Liens " + Methodes.nbrDeLiens(args[0]));
 
         //TODO 06: L'exploration devrait continuer en explorant le premier lien de chaque page. L'exploration s'arrête si une page ne contient aucun lien.
-            String liens = args[0])
-            while(JsoupGet.nbrDeLiens(liens) > 0){
-                try{
-                    System.out.println("Titre : " + JsoupGet.titreDeLaPage(JsoupGet.premierLien(liens)) + "URL : " + liens + " Liens " + JsoupGet.nbrDeLiens(liens));
-                    //String premierLiens = JsoupGet.premierLien(premierLiens);
-                    liens = JsoupGet.premierLien(liens);
-                }
-                catch{};
+        String lien = args[0];
+        while(Methodes.nbrDeLiens(lien) != 0){
+            try{
+                if(Methodes.premierLien(lien).equals(lien)){
 
+                }
+                else{
+                    System.out.println("Titre : " + Methodes.titreDeLaPage(Methodes.premierLien(lien)) + "URL : " + lien + " Liens " + Methodes.nbrDeLiens(lien));
+                    //String premierLiens = JsoupGet.premierLien(premierLiens);
+                    lien = Methodes.premierLien(lien);
+                }
             }
+
+            //TODO 07: L'exploration ignore un lien s'il n'est pas valide.
+            catch(IOException e){
+                System.out.println("URL ignorée : " + lien);
+            };
+            System.out.println("L'exploration s'est arrêtée, la page " + lien + " ne contient aucun lien valide.");
         }
 
 
-        //TODO 07: L'exploration ignore un lien s'il n'est pas valide.
+
+
 
         //TODO 08: On veut pouvoir contrôler l'exploration en forçant notre application à ignorer certains liens.
         // Si le premier lien d'une page a une URL qui contient un des mots clés passés en argument, on veut sauter ce lien et passer au suivant jusqu'à trouver un lien ne contenant aucun des mots clés.
