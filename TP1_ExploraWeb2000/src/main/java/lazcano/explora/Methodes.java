@@ -12,10 +12,11 @@ public class Methodes {
 
     public static void main(String args[]) throws IOException {
         //Tests
-//        String url = "https://info.cegepmontpetit.ca/3N5-Prog3/phase1.html";
-//        System.out.println("Titre: " + titreDeLaPage(url) + " liens " + nbrDeLiens(url));
+        //String url = "https://info.cegepmontpetit.ca/3N5-Prog3/phase1.html";
+        //System.out.println("Titre: " + titreDeLaPage(url) + " liens " + nbrDeLiens(url));
 
-//        System.out.println("decompose en liste " + findDuplicates(listeDepuisTableau("pipo popip pipo aaa sudiosus aaa".split(" "))));
+        //System.out.println("decompose en liste " + findDuplicates(listeDepuisTableau("pipo popip pipo aaa sudiosus aaa".split(" "))));
+       //System.out.println(Arrays.toString(liens("https://info.cegepmontpetit.ca/3N5-Prog3/z/sub/aaa/index.html")));
     }
 
     public static List<String> listeDepuisTableau(String[] tableau){
@@ -44,24 +45,36 @@ public class Methodes {
     }
 
     public static Integer nbrDeLiens(String url) throws IOException {
-        //Get Document object after parsing the html from given url.
-        Document document = Jsoup.connect(url).get();
+        try {
+            //Get Document object after parsing the html from given url.
+            Document document = Jsoup.connect(url).get();
 
-        //Get links from document
-        Elements links = document.select("a[href]");
+            //Get links from document
+            Elements links = document.select("a[href]");
 
-        //Count numbers of Links
+            //Count numbers of Links
+            int i = 0;
+            for (Element link : links) {
+                i++;
+            }
+            return i;
+        }
+        catch(IOException e){}
+        return 0;
+    }
+
+    public static String[] liensTab(String url) throws IOException {
+        Document document =  Jsoup.connect(url).get();
+        Elements liens = document.select("a[href]");
+
+      String[] liensTableau = new String[liens.size()];
         int i = 0;
-        for (Element link: links) {
+        for (Element lien: liens) {
+            liensTableau[i] = liens.get(i).attr("abs:href");
             i++;
         }
-        return i;
+        return liensTableau;
     }
 
-    public static String premierLien(String url) throws IOException {
-        Document document =  Jsoup.connect(url).get();
-        Elements links = document.select("a[href]");
-        return String.valueOf(links.get(0));
-    }
 
 }
